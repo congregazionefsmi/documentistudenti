@@ -692,7 +692,7 @@
       <div class="slot">
         <span class="slot-title">${label}</span>
         <div id="preview_${slotKey}" class="preview-box ${isTall ? "tall" : ""}">
-          <span style="color:#94a3b8; font-size:0.84rem;">No image uploaded</span>
+          <span style="color:#94a3b8; font-size:0.84rem;">Checking Drive...</span>
         </div>
         <div class="btn-row">
           <label class="file-btn">
@@ -823,6 +823,21 @@
 
   async function loadUserFiles(targetEmail = "") {
     document.getElementById("userLabel").textContent = "Loading documents from Drive...";
+    
+    // Show loading progress state across all slots while fetching
+    const allKeys = [
+      ...STANDARD_IDS.flatMap(i => [`${i.key}_Front`, `${i.key}_Back`]),
+      ...PASSPORT_SPREADS.map(i => i.key),
+      ...FULL_DOCS.map(i => i.key)
+    ];
+
+    allKeys.forEach(key => {
+      const preview = document.getElementById(`preview_${key}`);
+      if (preview && !savedImages[key]) {
+        preview.innerHTML = `<span style="color:#2563eb; font-size:0.84rem; font-weight:500; animation: pulse 1.2s infinite;">⏳ Fetching from Drive...</span>`;
+      }
+    });
+
     try {
       const res = await callBackend({ action: "getFiles", targetEmail });
       if (res.status !== "success") {
@@ -833,12 +848,6 @@
       viewingEmail = res.targetEmail;
       savedImages = res.files || {};
       document.getElementById("userLabel").textContent = `Active Folder: ${viewingEmail}`;
-
-      const allKeys = [
-        ...STANDARD_IDS.flatMap(i => [`${i.key}_Front`, `${i.key}_Back`]),
-        ...PASSPORT_SPREADS.map(i => i.key),
-        ...FULL_DOCS.map(i => i.key)
-      ];
 
       allKeys.forEach(key => {
         const preview = document.getElementById(`preview_${key}`);
