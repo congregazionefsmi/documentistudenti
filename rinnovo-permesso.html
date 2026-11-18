@@ -1,0 +1,1521 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Permesso di Soggiorno Rinnovo – Motivo Religioso (Fiumicino)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --bg-page: #fdf2f4;
+      --accent-mid: #e65c7a;
+      --accent-dark: #d9385a;
+      --accent-deep: #b82242;
+      --accent-soft: #ffe4ea;
+      --box-tint: #fff5f7;
+      --card-bg: #ffffff;
+      --border-subtle: #f5b8c6;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: #2b0b12;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1, h2, h3, .serif-heading {
+      font-family: Georgia, "Times New Roman", Times, serif;
+    }
+
+    .char-grid {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      align-items: center;
+      max-width: 100%;
+    }
+
+    .char-box {
+      width: 25px;
+      height: 29px;
+      border: 1.5px solid #d9385a;
+      background-color: var(--box-tint);
+      color: #0a0a0a;
+      font-family: "Courier New", Courier, monospace;
+      font-weight: 800;
+      font-size: 15px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      border-radius: 2px;
+      user-select: none;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .char-box.fixed-val {
+      background-color: #fff5f7;
+      border-color: #d9385a;
+      color: #000000;
+    }
+
+    .char-box.editable-box {
+      cursor: text;
+      background-color: #ffffff;
+      border-color: #d9385a;
+    }
+
+    .char-grid-wrapper:focus-within .char-box.editable-box {
+      border-color: #b82242;
+      background-color: #fff9fa;
+      box-shadow: 0 0 0 1px rgba(217, 56, 90, 0.3);
+    }
+
+    .char-box.active-caret {
+      border-color: #9f1239 !important;
+      background-color: #ffe4ea !important;
+    }
+
+    .slash-sep {
+      font-family: "Courier New", Courier, monospace;
+      font-weight: 800;
+      font-size: 18px;
+      color: #d9385a;
+      padding: 0 3px;
+    }
+
+    .hidden-input-overlay {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+      width: 1px;
+      height: 1px;
+    }
+
+    .doc-check {
+      accent-color: #d9385a;
+      width: 17px;
+      height: 17px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .doc-item input:checked + span {
+      text-decoration: line-through;
+      color: #7a525b;
+    }
+
+    .mod-field {
+      border: 1px solid #f4c2ce;
+      background-color: #fffafb;
+      border-radius: 6px;
+      padding: 10px 12px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .mod-field:hover {
+      border-color: #d9385a;
+    }
+
+    .field-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      height: 22px;
+      padding: 0 6px;
+      background-color: #d9385a;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 3px;
+      margin-right: 6px;
+    }
+
+    .search-hidden {
+      display: none !important;
+    }
+
+    /* Postal receipt table */
+    .postal-table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #222;
+      font-family: Arial, sans-serif;
+    }
+
+    .postal-table td {
+      border: 1px solid #555;
+      padding: 10px;
+      vertical-align: middle;
+    }
+
+    .postal-label {
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 7px;
+      text-transform: uppercase;
+    }
+
+    /* Yellow kit envelope table */
+    .yellow-kit-table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #332900;
+      background: #fffde7;
+      font-family: Arial, sans-serif;
+    }
+
+    .yellow-kit-table td {
+      border: 2px solid #d6a900;
+      padding: 12px;
+      vertical-align: middle;
+    }
+
+    .yellow-label {
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 7px;
+      text-transform: uppercase;
+    }
+
+    .yellow-boxes {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 3px;
+    }
+
+    .yellow-boxes span {
+      display: inline-flex;
+      width: 27px;
+      height: 31px;
+      border: 1.5px solid #d6a900;
+      background: #fff9c4;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      font-size: 15px;
+      font-weight: bold;
+      box-sizing: border-box;
+    }
+
+    .yellow-line {
+      height: 35px;
+      border-bottom: 2px solid #d6a900;
+      display: flex;
+      align-items: center;
+      padding-left: 5px;
+      font-family: "Courier New", monospace;
+      font-weight: bold;
+      letter-spacing: 3px;
+    }
+
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .print-flat {
+        box-shadow: none !important;
+        break-inside: avoid;
+      }
+
+      .char-box {
+        width: 22px;
+        height: 25px;
+        font-size: 13px;
+        border: 1.5px solid #d9385a !important;
+        color: #000000 !important;
+        background-color: #fff5f7 !important;
+      }
+
+      .field-num {
+        background-color: #d9385a !important;
+        color: #ffffff !important;
+      }
+
+      .yellow-kit-table,
+      .yellow-kit-table td,
+      .yellow-boxes span {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .char-box {
+        width: 22px;
+        height: 26px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen pb-12">
+
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-[#f5b8c6] shadow-sm no-print">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="inline-block px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider rounded-full bg-[#ffe4ea] text-[#c92a4a]">
+            Fiumicino • Questura di Roma
+          </span>
+
+          <span class="inline-block px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider rounded-full bg-[#d9385a]/15 text-[#b82242]">
+            Motivo Religioso
+          </span>
+        </div>
+
+        <h1 class="text-xl sm:text-2xl font-bold text-[#2b0b12] mt-1">
+          Permesso di Soggiorno – RINNOVO Guide &amp; Modulo 1 Grid
+        </h1>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+
+        <div class="relative flex-1 sm:w-64">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Filter field or item (e.g. 68, passport)..."
+            aria-label="Filter fields or checklist items"
+            class="w-full pl-3 pr-8 py-2 text-sm rounded-lg border border-[#f5b8c6] bg-[#fff5f7] text-[#2b0b12] placeholder-[#9c5a69] focus:outline-none focus:border-[#d9385a] focus:bg-white"
+          />
+
+          <button
+            type="button"
+            id="clearSearchBtn"
+            title="Clear filter"
+            aria-label="Clear filter"
+            class="hidden absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-[#d9385a] text-white text-xs font-bold flex items-center justify-center hover:bg-[#b82242]"
+          >
+            &times;
+          </button>
+        </div>
+
+        <button
+          type="button"
+          id="resetValuesBtn"
+          title="Restore default example text"
+          class="px-3 py-2 text-xs sm:text-sm font-semibold rounded-lg border border-[#f5b8c6] bg-white text-[#c92a4a] hover:bg-[#fff5f7] transition"
+        >
+          Reset Sample
+        </button>
+
+        <button
+          type="button"
+          onclick="window.print()"
+          class="px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-lg bg-[#d9385a] text-white hover:bg-[#b82242] shadow-sm transition flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+          </svg>
+          Print / Save PDF
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- PRINT TITLE -->
+  <div class="hidden print:block max-w-6xl mx-auto px-4 pt-4 pb-2 border-b-2 border-[#d9385a] mb-4">
+    <h1 class="text-2xl font-bold text-[#b82242]">
+      Permesso di Soggiorno RINNOVO – Motivo Religioso (Fiumicino / Roma)
+    </h1>
+    <p class="text-sm">Checklist &amp; Modulo 1 Visual Box Reference Sheet</p>
+  </div>
+
+  <main class="max-w-6xl mx-auto px-4 pt-6 space-y-6">
+
+    <!-- TOP CHECKLIST -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-4" id="checklistSection">
+
+      <!-- CARD 1 -->
+      <div class="bg-white rounded-xl border border-[#f5b8c6] shadow-sm p-5 print-flat searchable-card"
+           data-search="poste italiane photocopies passport codice fiscale dichiarazione tessera sanitaria health insurance 126.46 30 80.46 16 marca da bollo">
+
+        <div class="flex items-center justify-between border-b border-[#ffe4ea] pb-2.5 mb-3">
+          <h2 class="text-base font-bold text-[#c92a4a]">
+            Photocopies to prepare to submit at POSTE ITALIANE
+          </h2>
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-[#fff5f7] text-[#d9385a] border border-[#f5b8c6]">
+            Step 1
+          </span>
+        </div>
+
+        <ul class="space-y-2.5 text-sm">
+
+          <li class="doc-item flex items-start gap-2.5">
+            <input type="checkbox" class="doc-check mt-0.5" id="chk1" />
+            <label for="chk1" class="cursor-pointer select-none"><span>Passport copy</span></label>
+          </li>
+
+          <li class="doc-item flex items-start gap-2.5">
+            <input type="checkbox" class="doc-check mt-0.5" id="chk2" />
+            <label for="chk2" class="cursor-pointer select-none"><span>Current Permesso di Soggiorno copy</span></label>
+          </li>
+
+          <li class="doc-item flex items-start gap-2.5">
+            <input type="checkbox" class="doc-check mt-0.5" id="chk3" />
+            <label for="chk3" class="cursor-pointer select-none"><span>Codice Fiscale copy</span></label>
+          </li>
+
+          <li class="doc-item flex items-start gap-2.5">
+            <input type="checkbox" class="doc-check mt-0.5" id="chk4" />
+            <label for="chk4" class="cursor-pointer select-none"><span>Dichiarazione from the Religious Entity/Congregation</span></label>
+          </li>
+
+          <li class="doc-item flex items-start gap-2.5">
+            <input type="checkbox" class="doc-check mt-0.5" id="chk5" />
+            <label for="chk5" class="cursor-pointer select-none"><span>Health Insurance / Tessera Sanitaria copy</span></label>
+          </li>
+
+          <li class="doc-item flex items-start gap-2.5 pt-2 border-t border-dashed border-[#f5b8c6]">
+            <input type="checkbox" class="doc-check mt-0.5" id="chk6" />
+            <label for="chk6" class="cursor-pointer select-none font-semibold text-[#b82242]">
+              <span>Prepare €126.46 total (€30.00 + €80.46 + €16.00 Marca da Bollo)</span>
+            </label>
+          </li>
+
+        </ul>
+      </div>
+
+      <!-- CARD 2 -->
+      <div class="bg-white rounded-xl border border-[#f5b8c6] shadow-sm p-5 print-flat searchable-card"
+           data-search="biometrics day first appointment questura 4 passport photos original documents postal receipt ricevuta assicurata">
+
+        <div class="flex items-center justify-between border-b border-[#ffe4ea] pb-2.5 mb-3">
+          <h2 class="text-base font-bold text-[#c92a4a]">
+            On the biometrics day / first appointment
+          </h2>
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-[#fff5f7] text-[#d9385a] border border-[#f5b8c6]">
+            Step 2
+          </span>
+        </div>
+
+        <ul class="space-y-3 text-sm">
+
+          <li class="doc-item flex items-start gap-2.5">
+            <input type="checkbox" class="doc-check mt-0.5" id="chk7" />
+            <label for="chk7" class="cursor-pointer select-none font-medium"><span>4 passport photos</span></label>
+          </li>
+
+          <li class="doc-item flex items-start gap-2.5">
+            <input type="checkbox" class="doc-check mt-0.5" id="chk8" />
+            <label for="chk8" class="cursor-pointer select-none font-medium">
+              <span>All original documents + Postal Receipt (<em>ricevuta assicurata</em>)</span>
+            </label>
+          </li>
+
+        </ul>
+
+        <div class="mt-4 p-3 rounded-lg bg-[#fff5f7] border border-[#f5b8c6] text-xs text-[#8f1d37] leading-relaxed">
+          <strong>Tip:</strong> Carry your original <em>ricevuta assicurata</em> together with your passport and expiring permit at all times while waiting for the new card.
+        </div>
+      </div>
+
+      <!-- CARD 3 -->
+      <div class="bg-white rounded-xl border border-[#f5b8c6] shadow-sm p-5 print-flat searchable-card"
+           data-search="how to sign black pen caps lock modulo 1 conti correnti postali ricevuta di accredito">
+
+        <div class="flex items-center justify-between border-b border-[#ffe4ea] pb-2.5 mb-3">
+          <h2 class="text-base font-bold text-[#c92a4a]">HOW TO SIGN</h2>
+          <span class="text-xs font-bold px-2 py-0.5 rounded bg-[#ffe4ea] text-[#c92a4a]">
+            Important
+          </span>
+        </div>
+
+        <ol class="space-y-3 text-sm font-medium text-[#2b0b12]">
+
+          <li class="flex items-start gap-2.5">
+            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#d9385a] text-white text-xs font-bold flex-shrink-0">1</span>
+            <span>Black pen and all <strong>CAPS LOCK</strong></span>
+          </li>
+
+          <li class="flex items-start gap-2.5">
+            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#d9385a] text-white text-xs font-bold flex-shrink-0">2</span>
+            <span>Maintain only the <strong>Modulo 1</strong> and <strong>Conti Correnti Postali - ricevuta di Accredito</strong></span>
+          </li>
+
+        </ol>
+
+        <div class="mt-4 p-3 rounded-lg bg-[#fff5f7] border border-[#f5b8c6] text-xs text-[#c92a4a]">
+          Click any editable field below (such as <strong>Cognome, Nome, Codice Fiscale, Passport, Email, Phone</strong>) to type your own details directly into the pink/red boxes.
+        </div>
+      </div>
+
+    </section>
+
+    <!-- MODULO 1 -->
+    <section class="bg-white rounded-2xl border-2 border-[#d9385a] shadow-md overflow-hidden print-flat">
+
+      <div class="bg-gradient-to-r from-[#c92a4a] to-[#e65c7a] text-white px-5 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+        <div>
+          <span class="text-xs uppercase tracking-widest font-bold text-white/90 block">
+            Richiesta di Rinnovo del Permesso di Soggiorno
+          </span>
+
+          <h2 class="text-2xl font-bold tracking-wide mt-0.5">
+            MODULO 1 — Character Box Reference
+          </h2>
+        </div>
+
+        <!-- QUESTORE -->
+        <div class="bg-[#fff5f7] text-[#2b0b12] rounded-xl px-4 py-3 border-2 border-[#d9385a] shadow-sm flex flex-wrap items-center gap-4 searchable-card"
+             data-search="al signore questore di roma sigla provincia rm">
+
+          <div class="text-sm font-semibold text-[#8f1d37]">
+            Al Signore Questore di
+            <span class="inline-block px-1 font-mono font-extrabold text-base tracking-widest text-[#0a0a0a]">ROMA</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase text-[#c92a4a]">Sigla Provincia</span>
+            <div class="char-grid" data-fixed="RM" data-len="2"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="p-4 sm:p-6 space-y-8">
+
+        <!-- SEZIONE 1 -->
+        <div class="space-y-3" id="sezione1">
+
+          <div class="flex items-center gap-2 border-b-2 border-[#d9385a] pb-1.5">
+            <span class="px-3 py-1 rounded-md bg-[#d9385a] text-white font-bold text-sm tracking-wide">
+              SEZIONE 1
+            </span>
+            <span class="text-xs sm:text-sm font-semibold text-[#8f1d37]">
+              Dati della Richiesta e Generalità Principali
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+
+            <!-- FIELD 5 -->
+            <div class="mod-field searchable-card" data-search="5 sigla provincia rm">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">5</span>Provincia</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">RM</span>
+              </div>
+              <div class="char-grid" data-fixed="RM" data-len="2"></div>
+            </div>
+
+            <!-- FIELD 9 -->
+            <div class="mod-field searchable-card" data-search="9 x rinnovo">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">9</span>Rinnovo (Mark X)</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">X</span>
+              </div>
+              <div class="char-grid" data-fixed="X" data-len="1"></div>
+            </div>
+
+            <!-- FIELD 3 -->
+            <div class="mod-field md:col-span-2 lg:col-span-3 searchable-card" data-search="3 cognome surname last name">
+              <div class="flex flex-wrap items-center justify-between gap-1 mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">3</span>COGNOME (Surname)</span>
+                <span class="text-[11px] text-[#c92a4a] font-medium no-print">Click boxes to type your surname</span>
+              </div>
+              <div class="char-grid-wrapper" data-editable="cognome" data-default="COGNOME" data-len="24"></div>
+            </div>
+
+            <!-- FIELD 4 -->
+            <div class="mod-field md:col-span-2 lg:col-span-3 searchable-card" data-search="4 nome given name first name">
+              <div class="flex flex-wrap items-center justify-between gap-1 mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">4</span>NOME (First &amp; Middle Name)</span>
+                <span class="text-[11px] text-[#c92a4a] font-medium no-print">Click boxes to type your given name</span>
+              </div>
+              <div class="char-grid-wrapper" data-editable="nome" data-default="NOME" data-len="24"></div>
+            </div>
+
+            <!-- FIELD 6 -->
+            <div class="mod-field md:col-span-2 searchable-card" data-search="6 comune fiumicino">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">6</span>Comune</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">FIUMICINO</span>
+              </div>
+              <div class="char-grid" data-fixed="FIUMICINO" data-len="14"></div>
+            </div>
+
+            <!-- FIELD 14 -->
+            <div class="mod-field searchable-card" data-search="14 x">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">14</span>Mark X</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">X</span>
+              </div>
+              <div class="char-grid" data-fixed="X" data-len="1"></div>
+            </div>
+
+            <!-- FIELD 16 -->
+            <div class="mod-field searchable-card" data-search="16 20 motivi religiosi">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">16</span>Codice Motivo</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">20 (for Motivi Religiosi)</span>
+              </div>
+              <div class="char-grid" data-fixed="20" data-len="2"></div>
+            </div>
+
+            <!-- FIELD 18 -->
+            <div class="mod-field searchable-card" data-search="18 numero permesso permit number">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">18</span>NUMERO PERMESSO</span>
+                <span class="text-[11px] text-[#c92a4a] font-medium no-print">Editable sample</span>
+              </div>
+              <div class="char-grid-wrapper" data-editable="permesso_sample" data-default="IT2026001234567" data-len="15"></div>
+            </div>
+
+            <!-- FIELD 19 -->
+            <div class="mod-field searchable-card" data-search="19 20 motivi religiosi">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">19</span>Codice Motivo</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">20 (for Motivi Religiosi)</span>
+              </div>
+              <div class="char-grid" data-fixed="20" data-len="2"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SEZIONE 2 -->
+        <div class="space-y-3" id="sezione2">
+
+          <div class="flex items-center gap-2 border-b-2 border-[#d9385a] pb-1.5">
+            <span class="px-3 py-1 rounded-md bg-[#d9385a] text-white font-bold text-sm tracking-wide">
+              SEZIONE 2
+            </span>
+            <span class="text-xs sm:text-sm font-semibold text-[#8f1d37]">
+              Documentazione Allegata, Data e Firma
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+
+            <!-- FIELD 22 -->
+            <div class="mod-field searchable-card" data-search="22 01">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">22</span>Codice</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">01</span>
+              </div>
+              <div class="char-grid" data-fixed="01" data-len="2"></div>
+            </div>
+
+            <!-- FIELD 23 -->
+            <div class="mod-field searchable-card" data-search="23 x">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">23</span>Mark X</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">X</span>
+              </div>
+              <div class="char-grid" data-fixed="X" data-len="1"></div>
+            </div>
+
+            <!-- FIELD 25 -->
+            <div class="mod-field searchable-card" data-search="25 8 modulo 1 total number of photocopies">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">25</span>Totale Fogli</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">8 + photocopies</span>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2">
+                <div class="char-grid" id="fogliTotalGrid" data-fixed="08" data-len="2"></div>
+
+                <div class="flex items-center gap-1 no-print bg-[#fff5f7] border border-[#f5b8c6] rounded px-2 py-0.5">
+                  <span class="text-[11px] font-semibold text-[#8f1d37]">Copies:</span>
+
+                  <button type="button" id="decCopiesBtn"
+                    class="w-5 h-5 rounded bg-[#d9385a] text-white font-bold text-xs flex items-center justify-center hover:bg-[#b82242]">
+                    -
+                  </button>
+
+                  <span id="copiesCountLabel" class="text-xs font-bold font-mono px-1 text-[#2b0b12]">0</span>
+
+                  <button type="button" id="incCopiesBtn"
+                    class="w-5 h-5 rounded bg-[#d9385a] text-white font-bold text-xs flex items-center justify-center hover:bg-[#b82242]">
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <p class="mt-1.5 text-[11px] text-[#8f1d37]">
+                <strong>8</strong> (Modulo 1) + (total number of photocopies)
+              </p>
+            </div>
+
+            <!-- FIELD 28 -->
+            <div class="mod-field md:col-span-2 searchable-card" data-search="28 date of submission dd mm yyyy">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">28</span>Date of Submission</span>
+                <span class="text-[11px] text-[#c92a4a] font-medium no-print">DD / MM / YYYY</span>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-1">
+                <div class="char-grid-wrapper" data-editable="sub_dd" data-default="DD" data-len="2"></div>
+                <span class="slash-sep">/</span>
+                <div class="char-grid-wrapper" data-editable="sub_mm" data-default="MM" data-len="2"></div>
+                <span class="slash-sep">/</span>
+                <div class="char-grid-wrapper" data-editable="sub_yyyy" data-default="YYYY" data-len="4"></div>
+              </div>
+            </div>
+
+            <!-- FIELD 29 -->
+            <div class="mod-field searchable-card" data-search="29 sign firma">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">29</span>Sign</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">Signature</span>
+              </div>
+
+              <p class="mb-1 text-[11px] font-semibold text-[#111111]">
+                Sign inside the box in black ink — signature only, not over the printed name.
+              </p>
+
+              <div class="min-h-[82px] border-[1.5px] border-[#d9385a] rounded-sm bg-white"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SEZIONE 3 -->
+        <div class="space-y-3" id="sezione3">
+
+          <div class="flex items-center gap-2 border-b-2 border-[#d9385a] pb-1.5">
+            <span class="px-3 py-1 rounded-md bg-[#d9385a] text-white font-bold text-sm tracking-wide">
+              SEZIONE 3
+            </span>
+            <span class="text-xs sm:text-sm font-semibold text-[#8f1d37]">
+              Dati Anagrafici (Codice Fiscale, Nascita, Cittadinanza)
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+
+            <!-- FIELD 31 -->
+            <div class="mod-field md:col-span-2 lg:col-span-3 searchable-card" data-search="31 codice fiscale tax code">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">31</span>CODICE FISCALE (16 Characters)</span>
+                <span class="text-[11px] text-[#c92a4a] font-medium no-print">Click boxes to enter your 16-char Codice Fiscale</span>
+              </div>
+              <div class="char-grid-wrapper" data-editable="cf_sample" data-default="RSSMNL97A41Z216E" data-len="16"></div>
+            </div>
+
+            <!-- FIELD 32 -->
+            <div class="mod-field searchable-card" data-search="32 l single stato civile">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">32</span>Stato Civile</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">L (Single)</span>
+              </div>
+              <div class="char-grid" data-fixed="L" data-len="1"></div>
+            </div>
+
+            <!-- FIELD 33 -->
+            <div class="mod-field searchable-card" data-search="33 m male sesso">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">33</span>Sesso</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">M (Male)</span>
+              </div>
+              <div class="char-grid" data-fixed="M" data-len="1"></div>
+            </div>
+
+            <!-- FIELD 34 -->
+            <div class="mod-field searchable-card" data-search="34 birthday data di nascita dd mm yyyy">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">34</span>Birthday</span>
+                <span class="text-[11px] text-[#c92a4a] font-medium no-print">DD / MM / YYYY</span>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-1">
+                <div class="char-grid-wrapper" data-editable="bday_dd" data-default="DD" data-len="2"></div>
+                <span class="slash-sep">/</span>
+                <div class="char-grid-wrapper" data-editable="bday_mm" data-default="MM" data-len="2"></div>
+                <span class="slash-sep">/</span>
+                <div class="char-grid-wrapper" data-editable="bday_yyyy" data-default="YYYY" data-len="4"></div>
+              </div>
+            </div>
+
+            <!-- FIELD 35 -->
+            <div class="mod-field searchable-card" data-search="35 phl philippines stato nascita">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">35</span>Stato di Nascita</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">PHL (Philippines)</span>
+              </div>
+              <div class="char-grid" data-fixed="PHL" data-len="3"></div>
+            </div>
+
+            <!-- FIELD 36 -->
+            <div class="mod-field searchable-card" data-search="36 phl philippines cittadinanza">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">36</span>Cittadinanza</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">PHL (Philippines)</span>
+              </div>
+              <div class="char-grid" data-fixed="PHL" data-len="3"></div>
+            </div>
+
+            <!-- FIELD 38 -->
+            <div class="mod-field md:col-span-2 lg:col-span-3 searchable-card" data-search="38 city cag de oro city cagayan de oro city birth place">
+              <div class="flex flex-wrap items-center justify-between gap-1 mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">38</span>CITY (Place of Birth)</span>
+                <span class="text-[11px] text-[#c92a4a] font-medium no-print">Click boxes to edit city</span>
+              </div>
+
+              <div class="char-grid-wrapper" data-editable="birth_city" data-default="CAG DE ORO CITY" data-len="24"></div>
+
+              <p class="mt-2 text-xs text-[#8f1d37] bg-[#fff5f7] border border-[#f5b8c6] rounded px-2.5 py-1.5">
+                <strong>Note:</strong> Check your passport copy — write <strong>only what is written</strong> on your passport (e.g., <strong>CAG DE ORO CITY</strong> for CAGAYAN DE ORO CITY).
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SEZIONE 4 -->
+        <div class="space-y-3" id="sezione4">
+
+          <div class="flex items-center gap-2 border-b-2 border-[#d9385a] pb-1.5">
+            <span class="px-3 py-1 rounded-md bg-[#d9385a] text-white font-bold text-sm tracking-wide">
+              SEZIONE 4
+            </span>
+            <span class="text-xs sm:text-sm font-semibold text-[#8f1d37]">
+              Estremi del Passaporto
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+
+            <!-- FIELD 40 -->
+            <div class="mod-field searchable-card" data-search="40 x passaporto">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">40</span>Passaporto (Mark X)</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">X</span>
+              </div>
+              <div class="char-grid" data-fixed="X" data-len="1"></div>
+            </div>
+
+            <!-- FIELD 44 -->
+            <div class="mod-field md:col-span-2 searchable-card" data-search="44 passport number numero passaporto">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">44</span>PASSPORT NUMBER</span>
+                <span class="text-[11px] text-[#c92a4a] font-medium no-print">Click boxes to enter passport no.</span>
+              </div>
+              <div class="char-grid-wrapper" data-editable="passport_no_sample" data-default="P1234567A" data-len="14"></div>
+            </div>
+
+            <!-- FIELD 45 -->
+            <div class="mod-field md:col-span-2 searchable-card" data-search="45 expiration date scadenza passaporto dd mm yyyy">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">45</span>Expiration Date</span>
+                <span class="text-[11px] text-[#c92a4a] font-medium no-print">DD / MM / YYYY</span>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-1">
+                <div class="char-grid-wrapper" data-editable="pass_dd" data-default="DD" data-len="2"></div>
+                <span class="slash-sep">/</span>
+                <div class="char-grid-wrapper" data-editable="pass_mm" data-default="MM" data-len="2"></div>
+                <span class="slash-sep">/</span>
+                <div class="char-grid-wrapper" data-editable="pass_yyyy" data-default="YYYY" data-len="4"></div>
+              </div>
+            </div>
+
+            <!-- FIELD 46 -->
+            <div class="mod-field searchable-card" data-search="46 01 government 02 embassy rilasciato da">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">46</span>Rilasciato da</span>
+
+                <div class="flex items-center gap-1 no-print">
+                  <button type="button" id="btnAuth01"
+                    class="px-2 py-0.5 text-[11px] font-bold rounded bg-[#d9385a] text-white">01</button>
+
+                  <button type="button" id="btnAuth02"
+                    class="px-2 py-0.5 text-[11px] font-bold rounded bg-[#fff5f7] text-[#c92a4a] border border-[#f5b8c6]">02</button>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2.5">
+                <div class="char-grid" id="authCodeGrid" data-fixed="01" data-len="2"></div>
+                <span id="authCodeDesc" class="text-xs font-semibold text-[#2b0b12]">
+                  <strong>01</strong> (from the GOVERNMENT)
+                </span>
+              </div>
+
+              <p class="mt-1.5 text-[11px] text-[#8f1d37]">
+                <strong>01</strong> (from the GOVERNMENT) or <strong>02</strong> (if from the EMBASSY)
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SEZIONE 7 -->
+        <div class="space-y-3" id="sezione7">
+
+          <div class="flex items-center gap-2 border-b-2 border-[#d9385a] pb-1.5">
+            <span class="px-3 py-1 rounded-md bg-[#d9385a] text-white font-bold text-sm tracking-wide">
+              SEZIONE 7
+            </span>
+            <span class="text-xs sm:text-sm font-semibold text-[#8f1d37]">
+              Residenza / Domicilio a Fiumicino e Contatti
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+
+            <!-- FIELD 66 -->
+            <div class="mod-field searchable-card" data-search="66 rm provincia">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">66</span>Provincia</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">RM</span>
+              </div>
+              <div class="char-grid" data-fixed="RM" data-len="2"></div>
+            </div>
+
+            <!-- FIELD 67 -->
+            <div class="mod-field searchable-card" data-search="67 fiumicino comune">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">67</span>Comune</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">FIUMICINO</span>
+              </div>
+              <div class="char-grid" data-fixed="FIUMICINO" data-len="12"></div>
+            </div>
+
+            <!-- FIELD 72 -->
+            <div class="mod-field searchable-card" data-search="72 00054 cap fiumicino">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">72</span>CAP (Postal Code)</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">00054 (Fiumicino)</span>
+              </div>
+              <div class="char-grid" data-fixed="00054" data-len="5"></div>
+            </div>
+
+            <!-- FIELD 68 -->
+            <div class="mod-field md:col-span-2 lg:col-span-2 searchable-card" data-search="68 via del casale di santa lucia address">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">68</span>Indirizzo (Street Address)</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">VIA DEL CASALE DI SANTA LUCIA</span>
+              </div>
+              <div class="char-grid" data-fixed="VIA DEL CASALE DI SANTA LUCIA" data-len="29"></div>
+            </div>
+
+            <!-- FIELD 69 -->
+            <div class="mod-field searchable-card" data-search="69 48 37 comune di fiumicino numero civico">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">69</span>Numero Civico</span>
+                <span class="text-[11px] font-semibold text-[#c92a4a]">48</span>
+              </div>
+              <div class="char-grid" data-fixed="48" data-len="4"></div>
+
+              <p class="mt-2 text-xs text-[#92400e] bg-[#fffbeb] border border-[#fde68a] rounded px-2.5 py-1.5">
+                <strong>Important:</strong> Do <strong>not</strong> use 37 because <strong>48</strong> is the official address according to the <strong>COMUNE di FIUMICINO</strong>.
+              </p>
+            </div>
+
+            <!-- FIELD 73 -->
+            <div class="mod-field md:col-span-2 lg:col-span-3 searchable-card" data-search="73 email putyour-email@yourmail.com">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">73</span>Email Address</span>
+                <span class="text-[11px] text-[#c92a4a] font-medium no-print">Click boxes to enter your email</span>
+              </div>
+              <div class="char-grid-wrapper" data-editable="email" data-default="PUTYOUR-EMAIL@YOURMAIL.COM" data-len="30"></div>
+            </div>
+
+            <!-- FIELD 75 -->
+            <div class="mod-field md:col-span-2 lg:col-span-3 searchable-card" data-search="75 phone +39 3781234567 cellulare">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-[#2b0b12]"><span class="field-num">75</span>Telephone / Mobile (+39)</span>
+                <span class="text-[11px] text-[#c92a4a] font-medium no-print">Click boxes to enter your mobile number</span>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-1.5">
+                <div class="char-grid" data-fixed="+39" data-len="3"></div>
+                <span class="slash-sep">/</span>
+                <div class="char-grid-wrapper" data-editable="phone" data-default="3781234567" data-len="12"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SEZIONE 8 -->
+        <div class="space-y-3 searchable-card" id="sezione8"
+             data-search="sezione 8 outside fiumicino oristano cagliari current address">
+
+          <div class="flex items-center justify-between border-b-2 border-[#d9385a] pb-1.5">
+
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-md bg-[#d9385a] text-white font-bold text-sm tracking-wide">
+                SEZIONE 8
+              </span>
+
+              <span class="text-xs sm:text-sm font-semibold text-[#8f1d37]">
+                Recapito Alternativo (Solo se fuori Fiumicino)
+              </span>
+            </div>
+
+            <button type="button" id="toggleSez8Btn"
+              class="no-print px-2.5 py-1 text-xs font-bold rounded bg-[#fff5f7] text-[#c92a4a] border border-[#f5b8c6] hover:bg-[#ffe4ea]">
+              Hide / Show Boxes
+            </button>
+          </div>
+
+          <div class="rounded-xl border-2 border-[#d9385a] bg-[#fff5f7] p-4 space-y-3">
+
+            <div class="flex items-start gap-2.5">
+              <span class="px-2 py-0.5 rounded bg-[#d9385a] text-white text-xs font-bold uppercase tracking-wider mt-0.5">
+                Note
+              </span>
+
+              <p class="text-sm font-bold text-[#2b0b12]">
+                ONLY ANSWER IF YOU ARE OUTSIDE FIUMICINO
+
+                <span class="block font-normal text-xs sm:text-sm text-[#8f1d37] mt-0.5">
+                  (Put current address you are residing outside Fiumicino, e.g., ORISTANO / CAGLIARI etc.)
+                </span>
+              </p>
+            </div>
+
+            <div id="sez8FieldsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+
+              <div class="bg-white rounded-lg p-3 border border-[#f5b8c6]">
+                <span class="block text-xs font-bold text-[#c92a4a] mb-1.5">
+                  Comune / Città (Optional)
+                </span>
+
+                <input type="text" id="sez8CityInput" maxlength="40"
+                  autocomplete="address-level2" aria-label="Comune / Città"
+                  class="w-full bg-transparent border-0 border-b border-[#d9385a] rounded-none px-1 py-2 text-sm text-[#2b0b12] focus:outline-none focus:border-b-2" />
+              </div>
+
+              <div class="bg-white rounded-lg p-3 border border-[#f5b8c6]">
+                <span class="block text-xs font-bold text-[#c92a4a] mb-1.5">
+                  Indirizzo / Via e N. Civico (Optional)
+                </span>
+
+                <input type="text" id="sez8AddressInput" maxlength="80"
+                  autocomplete="street-address" aria-label="Indirizzo / Via e N. Civico"
+                  class="w-full bg-transparent border-0 border-b border-[#d9385a] rounded-none px-1 py-2 text-sm text-[#2b0b12] focus:outline-none focus:border-b-2" />
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================
+         CONTI CORRENTI POSTALI - RICEVUTA DI ACCREDITO
+    ====================================================== -->
+
+    <section id="ricevutaAccredito"
+      class="bg-white rounded-2xl border-2 border-[#64748b] shadow-md overflow-hidden print-flat searchable-card"
+      data-search="conti correnti postali ricevuta accredito euro 80,46 importo lettere eseguito da residenti via piazza cap localita fiumicino">
+
+      <div class="bg-[#e2e8f0] border-b-2 border-[#64748b] px-5 py-4 text-center text-[#172033]">
+        <h2 class="text-lg sm:text-xl font-extrabold tracking-wide uppercase">
+          CONTI CORRENTI POSTALI
+        </h2>
+        <p class="text-sm font-bold mt-1">
+          Ricevuta di Accredito
+        </p>
+      </div>
+
+      <div class="p-4 sm:p-6">
+
+        <table class="postal-table">
+          <tbody>
+
+            <!-- EURO -->
+            <tr>
+              <td colspan="2">
+                <div class="postal-label">di EURO</div>
+
+                <div class="flex items-center gap-2 flex-wrap">
+
+                  <div class="char-grid" data-fixed="00000080" data-len="8"></div>
+
+                  <span class="font-bold text-lg">,</span>
+
+                  <div class="char-grid" data-fixed="46" data-len="2"></div>
+
+                  <span class="text-xs text-slate-500 ml-1">(80,46)</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- AMOUNT IN WORDS -->
+            <tr>
+              <td colspan="2">
+                <div class="postal-label">IMPORTO IN LETTERE</div>
+                <div class="font-mono font-bold tracking-wide">
+                  OTTANTA / 46
+                </div>
+              </td>
+            </tr>
+
+            <!-- EXECUTED BY -->
+            <tr>
+              <td colspan="2">
+                <div class="postal-label">ESEGUITO DA</div>
+
+                <div class="char-grid-wrapper"
+                  data-editable="postal_eseguito"
+                  data-default="COGNOME NOME"
+                  data-len="30">
+                </div>
+              </td>
+            </tr>
+
+            <!-- RESIDENT AT -->
+            <tr>
+              <td colspan="2">
+                <div class="postal-label">RESIDENTI IN VIA - PIAZZA</div>
+
+                <div class="char-grid-wrapper"
+                  data-editable="postal_via"
+                  data-default="DEL CASALE DI S.LUCIA"
+                  data-len="30">
+                </div>
+              </td>
+            </tr>
+
+            <!-- CAP AND LOCALITY -->
+            <tr>
+
+              <td style="width:40%;">
+                <div class="postal-label">CAP</div>
+                <div class="char-grid" data-fixed="00054" data-len="5"></div>
+              </td>
+
+              <td>
+                <div class="postal-label">LOCALITA'</div>
+                <div class="char-grid" data-fixed="FIUMICINO" data-len="9"></div>
+              </td>
+
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         YELLOW KIT ENVELOPE - QUESTURA ADDRESS
+    ====================================================== -->
+
+    <section id="bustaKitGialla"
+      class="bg-[#fffdf0] rounded-2xl border-2 border-[#d6a900] shadow-md overflow-hidden print-flat searchable-card"
+      data-search="yellow kit envelope questura roma cap 00193 via del mascherino localita roma provincia rm">
+
+      <div class="bg-[#ffdf35] border-b-2 border-[#d6a900] px-5 py-4 text-center text-[#3f3100]">
+        <h2 class="text-lg sm:text-xl font-extrabold tracking-wide uppercase">
+          BUSTA KIT — INDIRIZZO QUESTURA
+        </h2>
+      </div>
+
+      <div class="p-4 sm:p-6">
+
+        <table class="yellow-kit-table">
+          <tbody>
+
+            <!-- QUESTURA -->
+            <tr>
+              <td colspan="2" class="bg-[#fff9c4]">
+                <strong>
+                  Al Signor Questura di
+                  <span class="font-extrabold">ROMA</span>
+                </strong>
+              </td>
+            </tr>
+
+            <!-- CAP AND LOCALITY -->
+            <tr>
+
+              <td style="width:40%;">
+                <div class="yellow-label">CAP</div>
+
+                <div class="yellow-boxes">
+                  <span>0</span>
+                  <span>0</span>
+                  <span>1</span>
+                  <span>9</span>
+                  <span>3</span>
+                </div>
+
+                <p class="mt-2 text-[11px] leading-snug text-[#725900]">
+                  *ROMA via del Mascherino
+                </p>
+              </td>
+
+              <td>
+                <div class="yellow-label">LOCALITA'</div>
+                <div class="yellow-line">ROMA</div>
+              </td>
+
+            </tr>
+
+            <!-- PROVINCE -->
+            <tr>
+              <td colspan="2">
+                <div class="yellow-label">PR</div>
+                <div class="yellow-line">RM</div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+
+    /* =========================================
+       RENDER FIXED CHARACTER BOXES
+    ========================================= */
+
+    function renderFixedGrids() {
+
+      const fixedGrids = document.querySelectorAll('.char-grid[data-fixed]');
+
+      fixedGrids.forEach((grid) => {
+
+        const text = (grid.getAttribute('data-fixed') || '').toUpperCase();
+        const len = parseInt(grid.getAttribute('data-len') || text.length, 10);
+
+        grid.innerHTML = '';
+
+        for (let i = 0; i < len; i++) {
+
+          const box = document.createElement('span');
+          box.className = 'char-box fixed-val';
+
+          const ch = text[i] || '';
+
+          box.textContent = ch === ' ' ? '\u00A0' : ch;
+
+          grid.appendChild(box);
+        }
+      });
+    }
+
+
+    /* =========================================
+       EDITABLE CHARACTER BOXES
+    ========================================= */
+
+    function initEditableGrids() {
+
+      const wrappers = document.querySelectorAll('.char-grid-wrapper[data-editable]');
+
+      wrappers.forEach((wrapper) => {
+
+        const key = wrapper.getAttribute('data-editable');
+        const defaultVal = (wrapper.getAttribute('data-default') || '').toUpperCase();
+        const maxLen = parseInt(wrapper.getAttribute('data-len') || '20', 10);
+
+        const saved = localStorage.getItem('pds_rinnovo_' + key);
+        const initialValue = saved !== null ? saved : defaultVal;
+
+        wrapper.innerHTML = '';
+
+        const hiddenInput = document.createElement('input');
+
+        hiddenInput.type = 'text';
+        hiddenInput.maxLength = maxLen;
+        hiddenInput.value = initialValue;
+        hiddenInput.className = 'hidden-input-overlay';
+        hiddenInput.setAttribute('aria-label', key);
+
+        const boxRow = document.createElement('div');
+        boxRow.className = 'char-grid';
+
+        const boxes = [];
+
+        for (let i = 0; i < maxLen; i++) {
+
+          const box = document.createElement('span');
+
+          box.className = 'char-box editable-box';
+          box.setAttribute('data-idx', i);
+
+          boxRow.appendChild(box);
+          boxes.push(box);
+        }
+
+        function syncBoxes() {
+
+          const val = hiddenInput.value.toUpperCase();
+
+          if (hiddenInput.value !== val) {
+            hiddenInput.value = val;
+          }
+
+          localStorage.setItem('pds_rinnovo_' + key, val);
+
+          const isFocused = document.activeElement === hiddenInput;
+          const caretIdx = Math.min(val.length, maxLen - 1);
+
+          for (let i = 0; i < maxLen; i++) {
+
+            const ch = val[i] || '';
+
+            boxes[i].textContent = ch === ' ' ? '\u00A0' : ch;
+
+            if (isFocused && i === caretIdx) {
+              boxes[i].classList.add('active-caret');
+            } else {
+              boxes[i].classList.remove('active-caret');
+            }
+          }
+        }
+
+        boxRow.addEventListener('click', () => {
+
+          hiddenInput.focus();
+
+          const end = hiddenInput.value.length;
+
+          hiddenInput.setSelectionRange(end, end);
+
+          syncBoxes();
+        });
+
+        hiddenInput.addEventListener('input', syncBoxes);
+        hiddenInput.addEventListener('focus', syncBoxes);
+        hiddenInput.addEventListener('blur', syncBoxes);
+        hiddenInput.addEventListener('keyup', syncBoxes);
+
+        wrapper.appendChild(hiddenInput);
+        wrapper.appendChild(boxRow);
+
+        syncBoxes();
+      });
+    }
+
+
+    /* =========================================
+       LIVE SEARCH FILTER
+    ========================================= */
+
+    function initSearchFilter() {
+
+      const searchInput = document.getElementById('searchInput');
+      const clearBtn = document.getElementById('clearSearchBtn');
+
+      const cards = document.querySelectorAll('.searchable-card');
+
+      function applyFilter() {
+
+        const query = searchInput.value.trim().toLowerCase();
+
+        if (query.length > 0) {
+          clearBtn.classList.remove('hidden');
+        } else {
+          clearBtn.classList.add('hidden');
+        }
+
+        cards.forEach((card) => {
+
+          const keywords = (card.getAttribute('data-search') || '').toLowerCase();
+          const textContent = card.textContent.toLowerCase();
+
+          if (!query || keywords.includes(query) || textContent.includes(query)) {
+            card.classList.remove('search-hidden');
+          } else {
+            card.classList.add('search-hidden');
+          }
+        });
+      }
+
+      searchInput.addEventListener('input', applyFilter);
+
+      clearBtn.addEventListener('click', () => {
+
+        searchInput.value = '';
+
+        applyFilter();
+
+        searchInput.focus();
+      });
+    }
+
+
+    /* =========================================
+       PHOTOCOPY COUNTER
+    ========================================= */
+
+    function initPhotocopyCounter() {
+
+      const decBtn = document.getElementById('decCopiesBtn');
+      const incBtn = document.getElementById('incCopiesBtn');
+      const countLabel = document.getElementById('copiesCountLabel');
+      const totalGrid = document.getElementById('fogliTotalGrid');
+
+      let copies = parseInt(localStorage.getItem('pds_rinnovo_copies') || '0', 10);
+
+      if (isNaN(copies) || copies < 0) copies = 0;
+
+      function updateTotalBoxes() {
+
+        const total = 8 + copies;
+
+        const formatted = total < 10 ? '0' + total : String(total);
+
+        countLabel.textContent = String(copies);
+
+        totalGrid.setAttribute('data-fixed', formatted);
+
+        renderFixedGrids();
+
+        localStorage.setItem('pds_rinnovo_copies', String(copies));
+      }
+
+      decBtn.addEventListener('click', () => {
+
+        if (copies > 0) {
+          copies--;
+          updateTotalBoxes();
+        }
+      });
+
+      incBtn.addEventListener('click', () => {
+
+        if (copies < 91) {
+          copies++;
+          updateTotalBoxes();
+        }
+      });
+
+      updateTotalBoxes();
+    }
+
+
+    /* =========================================
+       ISSUING AUTHORITY TOGGLE
+    ========================================= */
+
+    function initAuthorityToggle() {
+
+      const btn01 = document.getElementById('btnAuth01');
+      const btn02 = document.getElementById('btnAuth02');
+
+      const authGrid = document.getElementById('authCodeGrid');
+      const authDesc = document.getElementById('authCodeDesc');
+
+      function setAuth(code) {
+
+        authGrid.setAttribute('data-fixed', code);
+
+        renderFixedGrids();
+
+        if (code === '01') {
+
+          authDesc.innerHTML = '<strong>01</strong> (from the GOVERNMENT)';
+
+          btn01.className = 'px-2 py-0.5 text-[11px] font-bold rounded bg-[#d9385a] text-white';
+
+          btn02.className = 'px-2 py-0.5 text-[11px] font-bold rounded bg-[#fff5f7] text-[#c92a4a] border border-[#f5b8c6]';
+
+        } else {
+
+          authDesc.innerHTML = '<strong>02</strong> (if from the EMBASSY)';
+
+          btn02.className = 'px-2 py-0.5 text-[11px] font-bold rounded bg-[#d9385a] text-white';
+
+          btn01.className = 'px-2 py-0.5 text-[11px] font-bold rounded bg-[#fff5f7] text-[#c92a4a] border border-[#f5b8c6]';
+        }
+      }
+
+      btn01.addEventListener('click', () => setAuth('01'));
+      btn02.addEventListener('click', () => setAuth('02'));
+    }
+
+
+    /* =========================================
+       SEZIONE 8 HIDE / SHOW
+    ========================================= */
+
+    function initSezione8Toggle() {
+
+      const toggleBtn = document.getElementById('toggleSez8Btn');
+      const container = document.getElementById('sez8FieldsContainer');
+
+      toggleBtn.addEventListener('click', () => {
+        container.classList.toggle('hidden');
+      });
+    }
+
+
+    /* =========================================
+       RESET SAMPLE VALUES
+    ========================================= */
+
+    function initResetButton() {
+
+      const resetBtn = document.getElementById('resetValuesBtn');
+
+      resetBtn.addEventListener('click', () => {
+
+        const wrappers = document.querySelectorAll('.char-grid-wrapper[data-editable]');
+
+        wrappers.forEach((wrapper) => {
+
+          const key = wrapper.getAttribute('data-editable');
+
+          localStorage.removeItem('pds_rinnovo_' + key);
+        });
+
+        localStorage.removeItem('pds_rinnovo_copies');
+
+        const sez8City = document.getElementById('sez8CityInput');
+        const sez8Address = document.getElementById('sez8AddressInput');
+
+        if (sez8City) sez8City.value = '';
+        if (sez8Address) sez8Address.value = '';
+
+        initEditableGrids();
+        initPhotocopyCounter();
+      });
+    }
+
+
+    /* =========================================
+       INITIALIZE EVERYTHING
+    ========================================= */
+
+    window.addEventListener('DOMContentLoaded', () => {
+
+      renderFixedGrids();
+
+      initEditableGrids();
+
+      initPhotocopyCounter();
+
+      initAuthorityToggle();
+
+      initSezione8Toggle();
+
+      initSearchFilter();
+
+      initResetButton();
+
+    });
+
+  </script>
+
+</body>
+</html>

@@ -146,6 +146,55 @@
       .header, .main-body { padding: 18px; }
     }
 
+    /* Permesso Navigation Card (Below Header) */
+    .permesso-nav-card {
+      background: linear-gradient(135deg, #f0f7ff 0%, #e0effe 100%);
+      border: 1px solid #bae6fd;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.05);
+    }
+
+    .permesso-nav-card h4 {
+      margin: 0 0 10px 0;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--blue-900);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .permesso-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .permesso-links a {
+      background: #ffffff;
+      border: 1.5px solid #93c5fd;
+      color: var(--blue-800);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .permesso-links a:hover {
+      background: var(--blue-600);
+      border-color: var(--blue-600);
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+    }
+
     .welcome-box {
       text-align: center;
       padding: 48px 20px;
@@ -547,6 +596,20 @@
 
   <!-- Main Content -->
   <div class="main-body">
+
+    <!-- Permesso di Soggiorno Navigation Card (Blank space below header) -->
+    <div class="permesso-nav-card">
+      <h4>Permesso di Soggiorno Guides</h4>
+      <div class="permesso-links">
+        <a href="applica-permesso.html">
+          📄 APPLYING PERMESSO DI SOGGIORNO (FIRST TIME)
+        </a>
+        <a href="rinnovo-permesso.html">
+          🔄 RINNOVO PERMESSO DI SOGGIORNO
+        </a>
+      </div>
+    </div>
+
     <!-- Unauthenticated Welcome Prompt -->
     <div id="welcomeBox" class="welcome-box">
       <h3>Welcome to the Document Portal</h3>

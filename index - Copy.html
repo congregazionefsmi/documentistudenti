@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documenti Studenti — ID &amp; Document Portal</title>
+
+  <!-- Google Identity Services (OAuth Sign-In) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <!-- Cropper.js (Interactive Aspect-Ratio Locked Cropping) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
+  <!-- jsPDF (Client-Side Exact Dimension PDF Generator) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --blue-950: #0a192f;
+      --blue-900: #0f294a;
+      --blue-800: #163e73;
+      --blue-700: #1d4ed8;
+      --blue-600: #2563eb;
+      --blue-500: #3b82f6;
+      --blue-100: #dbeafe;
+      --blue-50: #eff6ff;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-500: #64748b;
+      --slate-700: #334155;
+      --slate-900: #0f172a;
+      --emerald-600: #059669;
+      --emerald-700: #047857;
+      --indigo-600: #4f46e5;
+      --rose-600: #e11d48;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #e0ecff 0%, #f1f5f9 50%, #dbeafe 100%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px 14px 48px 14px;
+      color: var(--slate-900);
+    }
+
+    /* Global Full-Screen Preloader Styles */
+    #globalLoader {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(6px);
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .loader-spinner {
+      width: 52px;
+      height: 52px;
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #loaderText {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    #loaderSub {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-top: 6px;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 12px 35px rgba(15, 41, 74, 0.12);
+      overflow: hidden;
+      border: 1px solid rgba(37, 99, 235, 0.12);
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--blue-900) 0%, var(--blue-700) 60%, var(--blue-500) 100%);
+      color: #ffffff;
+      padding: 26px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-text h1 {
+      margin: 0 0 6px 0;
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .header-text p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--blue-100);
+      font-weight: 400;
+    }
+
+    .signin-card {
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(8px);
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .main-body {
+      padding: 24px 28px;
+    }
+
+    @media (max-width: 600px) {
+      .header, .main-body { padding: 18px; }
+    }
+
+    .welcome-box {
+      text-align: center;
+      padding: 48px 20px;
+      background: var(--blue-50);
+      border: 1px dashed #93c5fd;
+      border-radius: 14px;
+      color: var(--blue-900);
+    }
+
+    .welcome-box h3 { margin: 0 0 8px 0; font-size: 1.15rem; }
+    .welcome-box p { margin: 0; color: var(--slate-500); font-size: 0.92rem; }
+
+    .admin-bar {
+      background: linear-gradient(to right, var(--blue-50), #e0f2fe);
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      border: 1px solid #93c5fd;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .admin-bar-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: var(--blue-900);
+      font-size: 0.95rem;
+    }
+
+    .admin-badge {
+      background: var(--blue-700);
+      color: #fff;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .admin-bar select {
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid #93c5fd;
+      background: #fff;
+      color: var(--slate-900);
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 500;
+      min-width: 260px;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-title {
+      background: linear-gradient(90deg, var(--blue-900) 0%, var(--blue-800) 100%);
+      color: #ffffff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      margin: 28px 0 16px 0;
+      font-size: 1.02rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(15, 41, 74, 0.1);
+    }
+
+    .section-title span.sub {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--blue-100);
+    }
+
+    .id-group {
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 16px;
+      background: var(--slate-50);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .id-group:hover {
+      border-color: #93c5fd;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.06);
+    }
+
+    .group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .group-header h4 {
+      margin: 0;
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--blue-900);
+    }
+
+    .include-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--blue-800);
+      cursor: pointer;
+      background: var(--blue-100);
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: background 0.15s ease;
+      user-select: none;
+    }
+
+    .include-label:hover { background: #bfdbfe; }
+
+    .include-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--blue-600);
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .sides {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .single-col {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    @media (max-width: 650px) {
+      .sides { grid-template-columns: 1fr; }
+    }
+
+    .slot {
+      background: #ffffff;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      transition: border-color 0.2s ease;
+    }
+
+    .slot:hover { border-color: var(--blue-500); }
+
+    .slot-title {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--slate-700);
+    }
+
+    .preview-box {
+      width: 100%;
+      height: 175px;
+      background: var(--slate-100);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin: 10px 0 12px 0;
+      border: 1px solid var(--slate-200);
+    }
+
+    .preview-box.tall { height: 245px; }
+
+    .preview-box img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button, .file-btn {
+      background: var(--blue-600);
+      color: #ffffff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    button:hover, .file-btn:hover { background: var(--blue-700); }
+    button:active, .file-btn:active { transform: scale(0.98); }
+
+    .cam-btn { background: var(--emerald-600); }
+    .cam-btn:hover { background: var(--emerald-700); }
+
+    input[type="file"] { display: none; }
+
+    .progress-wrap {
+      width: 100%;
+      background: var(--slate-200);
+      border-radius: 999px;
+      height: 7px;
+      margin-top: 10px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--blue-600);
+      transition: width 0.25s ease;
+    }
+
+    .status-text {
+      font-size: 0.78rem;
+      color: var(--slate-500);
+      margin-top: 6px;
+      min-height: 16px;
+      font-weight: 500;
+    }
+
+    .pdf-panel {
+      background: var(--blue-50);
+      border: 1px solid #bfdbfe;
+      border-radius: 14px;
+      padding: 20px;
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 720px) {
+      .pdf-panel { grid-template-columns: 1fr; }
+    }
+
+    .pdf-card {
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.05);
+    }
+
+    .pdf-card h3 {
+      margin: 0 0 6px 0;
+      font-size: 1.05rem;
+      color: var(--blue-900);
+    }
+
+    .pdf-card p {
+      margin: 0;
+      font-size: 0.83rem;
+      color: var(--slate-500);
+      line-height: 1.45;
+    }
+
+    .pdf-btn {
+      background: var(--blue-700);
+      font-size: 0.9rem;
+      padding: 11px 16px;
+      font-weight: 600;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .pdf-btn:hover { background: var(--blue-800); }
+    .pdf-btn.alt { background: var(--indigo-600); }
+    .pdf-btn.alt:hover { background: #4338ca; }
+    .pdf-btn.docs { background: var(--blue-900); }
+    .pdf-btn.docs:hover { background: var(--blue-950); }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 14px;
+      max-width: 740px;
+      width: 100%;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header strong {
+      font-size: 1.08rem;
+      color: var(--blue-900);
+      display: block;
+    }
+
+    .modal-header small {
+      color: var(--slate-500);
+      font-size: 0.83rem;
+    }
+
+    .crop-area {
+      width: 100%;
+      height: 55vh;
+      background: #0f172a;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 14px 0;
+    }
+
+    .crop-area img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-secondary { background: var(--slate-500); }
+    .btn-secondary:hover { background: var(--slate-700); }
+    .btn-danger { background: var(--rose-600); }
+    .btn-danger:hover { background: #be123c; }
+    .btn-success { background: var(--emerald-600); }
+    .btn-success:hover { background: var(--emerald-700); }
+  </style>
+</head>
+<body>
+
+<!-- Global Full-Screen Preloader Overlay -->
+<div id="globalLoader" style="display: none;">
+  <div class="loader-spinner"></div>
+  <div id="loaderText">Loading documents...</div>
+  <div id="loaderSub">Please wait while we sync with Google Drive</div>
+</div>
+
+<div class="container">
+  <!-- Header & Google Sign-In -->
+  <div class="header">
+    <div class="header-text">
+      <h1>Documenti Studenti — ID &amp; Document Portal</h1>
+      <p id="userLabel">Sign in with your Google account to upload or manage documents</p>
+    </div>
+
+    <div class="signin-card">
+      <div id="g_id_onload"
+           data-client_id="378175613541-tkom9ibgu6h618rt8neibld133ttledg.apps.googleusercontent.com"
+           data-callback="handleCredentialResponse"
+           data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin"
+           data-type="standard"
+           data-shape="rectangular"
+           data-theme="outline"
+           data-text="signin_with"
+           data-size="large"
+           data-logo_alignment="left">
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-body">
+    <!-- Unauthenticated Welcome Prompt -->
+    <div id="welcomeBox" class="welcome-box">
+      <h3>Welcome to the Document Portal</h3>
+      <p>Please click <strong>Sign in with Google</strong> in the top right corner to access your personal document folder.</p>
+    </div>
+
+    <!-- Authenticated Workspace -->
+    <div id="workspace" style="display: none;">
+      <!-- Admin Folder Selector (Visible only to fsmidev@gmail.com) -->
+      <div id="adminBar" class="admin-bar">
+        <div class="admin-bar-label">
+          <span class="admin-badge">Admin</span>
+          <label for="userSelect">Viewing Student / User Folder:</label>
+        </div>
+        <select id="userSelect" onchange="switchUserFolder()"></select>
+      </div>
+
+      <!-- Dynamic 18-Slot Upload Grid -->
+      <div id="slotsContainer"></div>
+
+      <!-- Two Independent PDF Export Panels -->
+      <div class="pdf-panel">
+        <div class="pdf-card">
+          <div>
+            <h3>1. Print IDs &amp; Passport / Visa PDF</h3>
+            <p>Prints only checked items with uploaded images. Automatically shifts items upward so there are zero blank boxes or empty spaces.</p>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button type="button" class="pdf-btn" onclick="generateIDsAndPassportPDF(1)">
+              Download PDF (Compact: Up to 5 IDs/Page)
+            </button>
+            <button type="button" class="pdf-btn alt" onclick="generateIDsAndPassportPDF(2)">
+              Download PDF (Spacious: Up to 3 IDs/Page)
+            </button>
+          </div>
+        </div>
+
+        <div class="pdf-card">
+          <div>
+            <h3>2. Print Full-Page Documents PDF</h3>
+            <p>Prints only checked A4 documents with uploaded images (1 full page per document, skipping any unchecked or missing documents).</p>
+          </div>
+          <button type="button" class="pdf-btn docs" onclick="generateDocumentsPDF()">
+            Download Selected Documents PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive Aspect-Ratio Locked Cropper Modal -->
+<div id="cropModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <strong id="cropTitle">Crop Document</strong>
+      <small>Align the edges of the card or document inside the frame. Use Rotate if sideways.</small>
+    </div>
+    <div class="crop-area">
+      <img id="cropImage" src="" alt="Document to crop" />
+    </div>
+    <div class="modal-actions">
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="btn-secondary" onclick="rotateCropper(-90)">↺ Rotate Left</button>
+        <button type="button" class="btn-secondary" onclick="rotateCropper(90)">↻ Rotate Right</button>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="btn-danger" onclick="closeCropper()">Cancel</button>
+        <button type="button" class="btn-success" onclick="confirmCropAndUpload()">Crop &amp; Upload</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfsAdnc7J4Vt8jSOLmEL7-EHynEh2u7WuwaDxxdr_oucNpF990y5JSwzk8Bbs2508r/exec";
+
+  let currentIdToken = "";
+  let viewingEmail = "";
+  let savedImages = {};
+  let cropper = null;
+  let activeSlotKey = "";
+  let activeSlotType = "";
+
+  // Part 1: Standard CR80 Landscape IDs (85.6mm x 54mm = 10 slots)
+  const STANDARD_IDS = [
+    { key: "Permesso", label: "1. Permesso di Soggiorno" },
+    { key: "CartaIdentita", label: "2. Carta d'Identità" },
+    { key: "TesseraSanitaria", label: "3. Tessera Sanitaria" },
+    { key: "TaxCode", label: "4. Codice Fiscale (Tax Code)" },
+    { key: "CongregationID", label: "5. Congregation ID" }
+  ];
+
+  // Part 2: Opened Passport & Visa Spreads (176mm x 125mm = 2 slots)
+  const PASSPORT_SPREADS = [
+    { key: "Passport_Spread", label: "Passaporto / Passport (Opened: Data Page + Facing Page)" },
+    { key: "Visa_Spread", label: "Visto / Visa (Opened: Visa Page + Facing Page)" }
+  ];
+
+  // Part 3: Full-Page A4 Documents (210mm x 297mm = 6 slots)
+  const FULL_DOCS = [
+    { key: "Doc_Dichiarazione", label: "Dichiarazione (Full Page)" },
+    { key: "Doc_Residence", label: "Certificato di Residenza / Residence (Full Page)" },
+    { key: "Doc_Medico", label: "Medico di Base / Scelta del Medico (Doctor)" },
+    { key: "Doc_Orario", label: "Orario / Appuntamento (Schedule)" },
+    { key: "Doc_Other1", label: "Altro Documento Importante 1 (Other Important Document 1)" },
+    { key: "Doc_Other2", label: "Altro Documento Importante 2 (Other Important Document 2)" }
+  ];
+
+  function buildUI() {
+    const container = document.getElementById("slotsContainer");
+
+    let html = `
+      <div class="section-title">
+        <span>Part 1: Standard ID Cards (Front &amp; Back)</span>
+        <span class="sub">Landscape CR80 • 85.6 × 54 mm</span>
+      </div>
+    `;
+
+    STANDARD_IDS.forEach(item => {
+      html += `
+        <div class="id-group">
+          <div class="group-header">
+            <h4>${item.label}</h4>
+            <label class="include-label">
+              <input type="checkbox" id="chk_${item.key}" checked />
+              Include in PDF
+            </label>
+          </div>
+          <div class="sides">
+            ${createSlotHTML(`${item.key}_Front`, `${item.label} — FRONT`, "id", false)}
+            ${createSlotHTML(`${item.key}_Back`, `${item.label} — BACK`, "id", false)}
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+      <div class="section-title">
+        <span>Part 2: Opened Passport &amp; Visa</span>
+        <span class="sub">2-Page Open Spread • 176 × 125 mm</span>
+      </div>
+    `;
+
+    PASSPORT_SPREADS.forEach(item => {
+      html += `
+        <div class="id-group">
+          <div class="group-header">
+            <h4>${item.label}</h4>
+            <label class="include-label">
+              <input type="checkbox" id="chk_${item.key}" checked />
+              Include in PDF
+            </label>
+          </div>
+          <div class="single-col">
+            ${createSlotHTML(item.key, item.label, "passport", false)}
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+      <div class="section-title">
+        <span>Part 3: Full-Page Documents</span>
+        <span class="sub">Portrait A4 • 210 × 297 mm</span>
+      </div>
+    `;
+
+    FULL_DOCS.forEach(item => {
+      html += `
+        <div class="id-group">
+          <div class="group-header">
+            <h4>${item.label}</h4>
+            <label class="include-label">
+              <input type="checkbox" id="chk_${item.key}" checked />
+              Include in PDF
+            </label>
+          </div>
+          <div class="single-col">
+            ${createSlotHTML(item.key, item.label, "doc", true)}
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+  }
+
+  function createSlotHTML(slotKey, label, type, isTall = false) {
+    const safeLabel = label.replace(/'/g, "\\'");
+    return `
+      <div class="slot">
+        <span class="slot-title">${label}</span>
+        <div id="preview_${slotKey}" class="preview-box ${isTall ? "tall" : ""}">
+          <span style="color:#94a3b8; font-size:0.84rem;">No image uploaded</span>
+        </div>
+        <div class="btn-row">
+          <label class="file-btn">
+            📁 Upload File
+            <input type="file" accept="image/*" onchange="openCropper(event, '${slotKey}', '${type}', '${safeLabel}')" />
+          </label>
+          <label class="file-btn cam-btn">
+            📷 Take Photo
+            <input type="file" accept="image/*" capture="environment" onchange="openCropper(event, '${slotKey}', '${type}', '${safeLabel}')" />
+          </label>
+        </div>
+        <div id="progWrap_${slotKey}" class="progress-wrap">
+          <div id="progBar_${slotKey}" class="progress-bar"></div>
+        </div>
+        <div id="status_${slotKey}" class="status-text"></div>
+      </div>
+    `;
+  }
+
+  function openCropper(event, slotKey, type, label) {
+    const file = event.target.files[0];
+    if (!file) return;
+    event.target.value = "";
+
+    activeSlotKey = slotKey;
+    activeSlotType = type;
+    document.getElementById("cropTitle").textContent = "Crop: " + label;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = document.getElementById("cropImage");
+      img.src = e.target.result;
+      document.getElementById("cropModal").style.display = "flex";
+
+      if (cropper) cropper.destroy();
+
+      let aspectRatio = 85.6 / 54;
+      if (type === "passport") aspectRatio = 176 / 125;
+      if (type === "doc") aspectRatio = 210 / 297;
+
+      cropper = new Cropper(img, {
+        aspectRatio: aspectRatio,
+        viewMode: 1,
+        autoCropArea: 0.9,
+        responsive: true
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function rotateCropper(deg) {
+    if (cropper) cropper.rotate(deg);
+  }
+
+  function closeCropper() {
+    document.getElementById("cropModal").style.display = "none";
+    if (cropper) {
+      cropper.destroy();
+      cropper = null;
+    }
+  }
+
+  async function confirmCropAndUpload() {
+    if (!cropper) return;
+
+    let targetW = 1200;
+    let targetH = Math.round(1200 / (85.6 / 54));
+    if (activeSlotType === "passport") {
+      targetW = 1600;
+      targetH = Math.round(1600 / (176 / 125));
+    } else if (activeSlotType === "doc") {
+      targetW = 1400;
+      targetH = Math.round(1400 / (210 / 297));
+    }
+
+    const canvas = cropper.getCroppedCanvas({ width: targetW, height: targetH });
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.88);
+    const slotKey = activeSlotKey;
+
+    closeCropper();
+
+    const progWrap = document.getElementById(`progWrap_${slotKey}`);
+    const progBar = document.getElementById(`progBar_${slotKey}`);
+    const status = document.getElementById(`status_${slotKey}`);
+
+    progWrap.style.display = "block";
+    progBar.style.background = "#2563eb";
+    progBar.style.width = "45%";
+    status.textContent = "Uploading & replacing old file...";
+
+    document.getElementById(`preview_${slotKey}`).innerHTML = `<img src="${dataUrl}" alt="${slotKey}" />`;
+    savedImages[slotKey] = dataUrl;
+
+    const base64Only = dataUrl.split(",")[1];
+    try {
+      const res = await callBackend({
+        action: "uploadFile",
+        targetEmail: viewingEmail,
+        slotName: slotKey,
+        base64Data: base64Only
+      });
+
+      if (res.status === "success") {
+        progBar.style.width = "100%";
+        progBar.style.background = "#059669";
+        status.textContent = "✓ Saved in Drive";
+        setTimeout(() => {
+          progWrap.style.display = "none";
+          progBar.style.width = "0%";
+        }, 1500);
+      } else {
+        status.textContent = "Error: " + res.message;
+        progBar.style.background = "#e11d48";
+      }
+    } catch (err) {
+      status.textContent = "Network error: " + err.message;
+      progBar.style.background = "#e11d48";
+    }
+  }
+
+  async function handleCredentialResponse(response) {
+    currentIdToken = response.credential;
+    document.getElementById("welcomeBox").style.display = "none";
+    buildUI();
+    document.getElementById("workspace").style.display = "block";
+    await loadUserFiles();
+  }
+
+  async function loadUserFiles(targetEmail = "") {
+    // Show full-screen loader
+    const loader = document.getElementById("globalLoader");
+    const loaderText = document.getElementById("loaderText");
+    loaderText.textContent = targetEmail ? `Loading folder for ${targetEmail}...` : "Loading your documents from Google Drive...";
+    loader.style.display = "flex";
+
+    try {
+      const res = await callBackend({ action: "getFiles", targetEmail });
+      if (res.status !== "success") {
+        alert(res.message);
+        return;
+      }
+
+      viewingEmail = res.targetEmail;
+      savedImages = res.files || {};
+      document.getElementById("userLabel").textContent = `Active Folder: ${viewingEmail}`;
+
+      const allKeys = [
+        ...STANDARD_IDS.flatMap(i => [`${i.key}_Front`, `${i.key}_Back`]),
+        ...PASSPORT_SPREADS.map(i => i.key),
+        ...FULL_DOCS.map(i => i.key)
+      ];
+
+      allKeys.forEach(key => {
+        const preview = document.getElementById(`preview_${key}`);
+        const status = document.getElementById(`status_${key}`);
+        if (savedImages[key]) {
+          preview.innerHTML = `<img src="${savedImages[key]}" alt="${key}" />`;
+          status.textContent = "✓ Saved in Drive (Upload new to replace)";
+        } else {
+          preview.innerHTML = `<span style="color:#94a3b8; font-size:0.84rem;">No image uploaded</span>`;
+          status.textContent = "";
+        }
+      });
+
+      if (res.isAdmin && !targetEmail) {
+        const listRes = await callBackend({ action: "listUsers" });
+        if (listRes.status === "success") {
+          const adminBar = document.getElementById("adminBar");
+          adminBar.style.display = "flex";
+          document.getElementById("userSelect").innerHTML = listRes.users.map(u =>
+            `<option value="${u}" ${u === viewingEmail ? "selected" : ""}>${u}</option>`
+          ).join("");
+        }
+      }
+    } catch (err) {
+      document.getElementById("userLabel").textContent = "Failed to connect to backend.";
+      alert("Error connecting to Google Apps Script: " + err.message);
+    } finally {
+      // Hide full-screen loader once rendering is fully complete
+      loader.style.display = "none";
+    }
+  }
+
+  function switchUserFolder() {
+    loadUserFiles(document.getElementById("userSelect").value);
+  }
+
+  async function callBackend(payload) {
+    payload.idToken = currentIdToken;
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+    
+    const text = await response.text();
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      throw new Error("Server returned non-JSON response: " + text.substring(0, 120));
+    }
+  }
+
+  // PDF GENERATOR 1: IDs + Opened Passport/Visa (Auto-compacts, zero blank boxes)
+  function generateIDsAndPassportPDF(layoutMode) {
+    const activeIDs = STANDARD_IDS.filter(item => {
+      const isChecked = document.getElementById(`chk_${item.key}`).checked;
+      const hasFront = !!savedImages[`${item.key}_Front`];
+      const hasBack = !!savedImages[`${item.key}_Back`];
+      return isChecked && (hasFront || hasBack);
+    });
+
+    const activeSpreads = PASSPORT_SPREADS.filter(item => {
+      const isChecked = document.getElementById(`chk_${item.key}`).checked;
+      return isChecked && !!savedImages[item.key];
+    });
+
+    if (activeIDs.length === 0 && activeSpreads.length === 0) {
+      alert("Please select at least one uploaded ID or Passport/Visa to print.");
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    let hasStartedPage = false;
+
+    if (activeIDs.length > 0) {
+      hasStartedPage = true;
+      const cardW = 85.6;
+      const cardH = 54.0;
+      const colGap = 10;
+      const marginX = (210 - (cardW * 2 + colGap)) / 2;
+      const marginY = 8;
+      const rowGap = (layoutMode === 1) ? 3.5 : 15;
+      const rowsLimit = (layoutMode === 1) ? 5 : 3;
+
+      activeIDs.forEach((item, idx) => {
+        if (idx > 0 && idx % rowsLimit === 0) {
+          doc.addPage();
+        }
+        const rowIdx = idx % rowsLimit;
+        const y = marginY + rowIdx * (cardH + rowGap);
+
+        const frontImg = savedImages[`${item.key}_Front`];
+        const backImg = savedImages[`${item.key}_Back`];
+
+        if (frontImg) {
+          doc.setDrawColor(190);
+          doc.rect(marginX, y, cardW, cardH);
+          doc.addImage(frontImg, "JPEG", marginX, y, cardW, cardH);
+
+          if (backImg) {
+            const rightX = marginX + cardW + colGap;
+            doc.rect(rightX, y, cardW, cardH);
+            doc.addImage(backImg, "JPEG", rightX, y, cardW, cardH);
+          }
+        } else if (backImg) {
+          doc.setDrawColor(190);
+          doc.rect(marginX, y, cardW, cardH);
+          doc.addImage(backImg, "JPEG", marginX, y, cardW, cardH);
+        }
+      });
+    }
+
+    if (activeSpreads.length > 0) {
+      if (hasStartedPage) {
+        doc.addPage();
+      }
+      const passW = 176;
+      const passH = 125;
+      const passX = (210 - passW) / 2;
+
+      activeSpreads.forEach((item, idx) => {
+        if (idx > 0 && idx % 2 === 0) {
+          doc.addPage();
+        }
+        const slotIdx = idx % 2;
+        const y = 16 + slotIdx * (passH + 15);
+        doc.setDrawColor(190);
+        doc.rect(passX, y, passW, passH);
+        doc.addImage(savedImages[item.key], "JPEG", passX, y, passW, passH);
+      });
+    }
+
+    doc.save(`${viewingEmail}_IDs_e_Passaporto.pdf`);
+  }
+
+  // PDF GENERATOR 2: Full-Page A4 Documents (Only checked + uploaded, no blank pages)
+  function generateDocumentsPDF() {
+    const activeDocs = FULL_DOCS.filter(item => {
+      const isChecked = document.getElementById(`chk_${item.key}`).checked;
+      return isChecked && !!savedImages[item.key];
+    });
+
+    if (activeDocs.length === 0) {
+      alert("Please select at least one uploaded full-page document to print.");
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+    activeDocs.forEach((item, idx) => {
+      if (idx > 0) {
+        doc.addPage();
+      }
+      doc.addImage(savedImages[item.key], "JPEG", 5, 5, 200, 287);
+    });
+
+    doc.save(`${viewingEmail}_Documenti.pdf`);
+  }
+</script>
+
+</body>
+</html>
